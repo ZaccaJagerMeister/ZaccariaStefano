@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<title>Mappa con Marker Interattivi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<style>
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map').setView([20, 0], 2);
+
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri'
+  }).addTo(map);
+
+  const redIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+    iconSize: [35, 55],
+    iconAnchor: [17, 55],
+    popupAnchor: [0, -46],
+    shadowSize: [41, 41]
+  });
+
+  const blueIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [0, -34],
+    shadowSize: [41, 41]
+  });
+
+  let openPopups = [];
+
+  function closePopups() {
+    openPopups.forEach(popup => {
+      popup._popup.remove();
+    });
+    openPopups = [];
+  }
+
+  // --- AFGHANISTAN ---
+  let afghanistanMarkersAdded = false;
+  function addAfghanistanMarkers() {
+    if (afghanistanMarkersAdded) return;
+    afghanistanMarkersAdded = true;
+
+    const markers = [
+      {
+        coords: [34.5213, 69.1232],
+        text: "Nel 2018 invece le elezioni parlamentari furono posticipate più volte, furono infine organizzate tra attentati e accuse di brogli. Nonostante la partecipazione, molte zone rurali non votarono per motivi di sicurezza."
+      },
+      {
+        coords: [34.5260, 69.1783],
+        text: "Tra il 2004 e il 2021, il governo afghano (con l'appoggio di ONG e forze internazionali) sostenne l'accesso delle donne alla vita pubblica e politica. Malgrado i progressi, le minacce talebane e le violenze hanno ostacolato la partecipazione politica femminile."
+      },
+      {
+        coords: [34.4700, 69.1192],
+        text: "Nell'agosto del 2021 infine questo paese assistette al crollo della democrazia e del governo repubblicano con il ritorno al potere dei talebani."
+      },
+      {
+        coords: [34.3456, 62.1997],
+        text: "Tra il 2009 e il 2014 le elezioni furono contestate da accuse di brogli, violenze e affluenze molto basse."
+      },
+      {
+        coords: [36.7069, 67.1128],
+        text: "Nel 2004 la Loya Jirga approvò una nuova Costituzione, gettando le basi per una repubblica islamica con diritti estesi alle donne e un parlamento eletto."
+      }
+    ];
+
+    markers.forEach(m => {
+      const marker = L.marker(m.coords, { icon: blueIcon }).addTo(map)
+        .bindPopup(m.text);
+      openPopups.push(marker);
+    });
+  }
+
+  // --- CUBA ---
+  let cubaMarkersAdded = false;
+  function addCubaMarkers() {
+    if (cubaMarkersAdded) return;
+    cubaMarkersAdded = true;
+
+    const markers = [
+      {
+        coords: [23.5213, -82.1232],
+        text: "L'11 luglio 2021, migliaia di cubani sono scesi in piazza in tutto il paese per protestare contro la crisi economica, la carenza di beni essenziali e la gestione della pandemia. Queste manifestazioni, le più grandi dagli anni '90, sono state represse con forza dal governo: oltre 1.400 persone sono state arrestate e più di 790 incriminate, con condanne fino a 30 anni di carcere, inclusi minorenni. Organizzazioni come Amnesty International e l'Unione Europea hanno denunciato la sproporzione delle pene e la violazione del diritto di manifestare pacificamente."
+      },
+      {
+        coords: [22.5260, -80.1783],
+        text: "Il periodo post-rivoluzionario ha visto un isolamento internazionale, nonché una serie di riforme economiche e sociali radicali in un clima di tensione durante la Guerra Fredda."
+      },
+      {
+        coords: [21.4700, -78.1192],
+        text: "Cuba è stata oggetto di numerose tensioni con gli Stati Uniti, tra cui il famoso episodio della Crisi dei missili nel 1962, che quasi portò a una guerra nucleare."
+      },
+      {
+        coords: [21.3456, -76.1997],
+        text: "Nel 2008 Fidel Castro cedette la presidenza a suo fratello Raúl, dando avvio a una serie di riforme politiche e sociali. Raúl promosse anche un riavvicinamento con gli Stati Uniti durante il mandato di Obama."
+      }
+    ];
+
+    markers.forEach(m => {
+      const marker = L.marker(m.coords, { icon: blueIcon }).addTo(map)
+        .bindPopup(m.text);
+      openPopups.push(marker);
+    });
+  }
+
+  // Marker principale Afghanistan
+  const afgMarker = L.marker([33.9391, 67.71], { icon: redIcon }).addTo(map);
+  afgMarker.bindPopup("<b>Afghanistan</b>");
+  afgMarker.on('click', function () {
+    map.setView([33.9391, 67.71], 6);
+    afgMarker.openPopup();
+    addAfghanistanMarkers();
+  });
+
+  // Marker principale Cuba
+  const cubaMarker = L.marker([21.5218, -77.7812], { icon: redIcon }).addTo(map);
+  cubaMarker.bindPopup("<b>Cuba</b>");
+  cubaMarker.on('click', function () {
+    map.setView([21.5218, -77.7812], 6);
+    cubaMarker.openPopup();
+    addCubaMarkers();
+  });
+
+  // Chiude i popup se si fa troppo zoom out
+  map.on('zoomend', function () {
+    if (map.getZoom() < 5) {
+      closePopups();
+    }
+  });
+</script>
+
+</body>
+</html>
